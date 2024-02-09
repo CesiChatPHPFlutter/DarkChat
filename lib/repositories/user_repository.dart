@@ -57,14 +57,14 @@ class UserRepository{
     if (response.statusCode == 200) {
 
       Map<String, dynamic> jsonResponse = json.decode(response.body);
-
+  
       Map<String, dynamic> userData = jsonResponse['User'];
       String jwtToken = jsonResponse['JwtToken'];
-
+ 
       User user = User(
-        user_id: userData['UserId'],
-        name: userData['Name'],
-        mail: userData['Mail'],
+        user_id: userData['userId'],
+        name: userData['name'],
+        mail: userData['mail'],
         token: jwtToken
       );
 
@@ -77,7 +77,7 @@ class UserRepository{
   }
 
   static Future<int?> signUp(String name, String username, String password) async {
-    String url = 'http://10.176.130.236:8888/Public/User/GetAll';
+    String url = 'http://10.176.130.236:8888/Public/User/Create';
 
     Map<String, dynamic> authData = {
       'name': name,
@@ -94,7 +94,7 @@ class UserRepository{
       },
       body: jsonBody,
     );
-    print(response.headers);
+
     if (response.statusCode == 200) {
       return response.statusCode;
     } else {
