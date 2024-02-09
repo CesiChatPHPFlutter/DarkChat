@@ -8,12 +8,12 @@ class UserRepository{
     List<User> userList = [];
 
     // URL de l'API
-    String url = 'http://localhost:8888/Public/User/GetAll';
+    String url = 'http://10.176.130.236:8888/Public/User/GetAll';
 
     // Effectuer la requête HTTP
     var response = await http.get(Uri.parse(url));
 
-    // Vérifier si la requête a réussi (code 200)
+    // Vérifier si la requête a réussi (code 200)-
     if (response.statusCode == 200) {
       // Convertir la réponse JSON en une liste d'objets User
       List<dynamic> jsonResponse = json.decode(response.body);
