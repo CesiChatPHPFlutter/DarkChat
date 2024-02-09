@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/models/user.dart';
+import 'package:message_app/pages/menu.dart';
 import 'package:message_app/repositories/user_repository.dart';
 
 class Login extends StatefulWidget {
@@ -20,9 +21,14 @@ class _LoginState extends State<Login> {
     User? user = await UserRepository.login(username, password);
 
     if (user != null) {
-      print("ok");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Menu(user: user),
+        ),
+      );
     } else {
-      // Handle unsuccessful login
+
     }
   }
 
