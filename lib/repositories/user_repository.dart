@@ -23,7 +23,8 @@ class UserRepository{
         User user = User(
           user_id: item['UserId'],
           name: item['Name'],
-          mail: item['Mail']
+          mail: item['Mail'],
+          token: item['Token']
         );
         userList.add(user);
       }
@@ -64,6 +65,7 @@ class UserRepository{
         user_id: userData['UserId'],
         name: userData['Name'],
         mail: userData['Mail'],
+        token: jwtToken
       );
 
       return user;
@@ -73,4 +75,73 @@ class UserRepository{
       return null;
     }
   }
+
+  static Future<int?> signUp(String name, String username, String password) async {
+    String url = 'http://10.176.130.236:8888/Public/User/GetAll';
+
+    Map<String, dynamic> authData = {
+      'name': name,
+      'mail': username,
+      'password': password,
+    };
+    
+    String jsonBody = json.encode(authData);
+    print (jsonBody);
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonBody,
+    );
+    print(response.headers);
+    if (response.statusCode == 200) {
+      return response.statusCode;
+    } else {
+      // Gérer l'erreur si la requête a échoué
+      print('Failed to sign up: ${response.statusCode}');
+      return null;
+    }
+
+  }
+
+  static Future<List<User>> getChats(String token) async {
+    String url = 'http://10.176.130.236:8888/Public/Message/getChats';
+
+    Map<String, dynamic> authData = {
+      'token': token,
+    };
+
+    String jsonBody = json.encode(authData);
+
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonBody,
+    );
+
+    List<User> userList = [];
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = json.decode(response.body);
+
+      for (var item in jsonResponse) {
+        User user = User(
+          user_id: item['UserId'],
+          name: item['Name'],
+          mail: item['Mail'],
+          token: item['Token']
+        );
+        userList.add(user);
+      }
+    } else {
+      // Gérer l'erreur si la requête a échoué
+      print('Failed to load chats: ${response.statusCode}');
+    }
+
+    return userList;
+  }
 }
+  
