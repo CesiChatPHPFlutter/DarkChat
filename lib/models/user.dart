@@ -5,7 +5,7 @@ class User {
   String? password;
   String? token;
 
-  User({this.user_id, this.name, this.mail, this.password, required String token});
+  User({this.user_id, this.name, this.mail, this.password, this.token});
 
   Map<String, dynamic> toMap() {
     return {
@@ -13,6 +13,7 @@ class User {
       'name': name,
       'mail': mail,
       'password': password,
+      'token': token,
     };
   }
 

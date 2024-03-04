@@ -20,6 +20,8 @@ class _LoginState extends State<Login> {
     String password = _passwordController.text;
 
     User? user = await UserRepository.login(username, password);
+    print(user!.name);
+    print(user!.token);
     
     if (user != null) {
       Navigator.push(
