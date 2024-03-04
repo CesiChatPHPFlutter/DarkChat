@@ -8,7 +8,7 @@ class UserRepository{
     List<User> userList = [];
 
     // URL de l'API
-    String url = 'http://10.176.130.236:8888/Public/User/GetAll';
+    String url = 'http://192.168.104.128/Public/User/GetAll';
 
     // Effectuer la requête HTTP
     var response = await http.get(Uri.parse(url));
@@ -21,10 +21,10 @@ class UserRepository{
       // Parcourir la liste JSON et créer des objets User
       for (var item in jsonResponse) {
         User user = User(
-          user_id: item['UserId'],
-          name: item['Name'],
-          mail: item['Mail'],
-          token: item['Token']
+            user_id: item['UserId'],
+            name: item['Name'],
+            mail: item['Mail'],
+            token: item['Token']
         );
         userList.add(user);
       }
@@ -32,12 +32,11 @@ class UserRepository{
       // Gérer l'erreur si la requête a échoué
       print('Failed to load users: ${response.statusCode}');
     }
-
     return userList;
   }
 
   static Future<User?> login(String username, String password) async {
-    String url = 'http://10.176.130.236:8888/Public/User/Login';
+    String url = 'http://192.168.104.128/Public/User/Login';
 
     Map<String, dynamic> authData = {
       'mail': username,
@@ -57,34 +56,45 @@ class UserRepository{
     if (response.statusCode == 200) {
 
       Map<String, dynamic> jsonResponse = json.decode(response.body);
-  
-      Map<String, dynamic> userData = jsonResponse['User'];
-      String jwtToken = jsonResponse['JwtToken'];
- 
-      User user = User(
-        user_id: userData['userId'],
-        name: userData['name'],
-        mail: userData['mail'],
-        token: jwtToken
-      );
 
-      return user;
-    } else {
-      // Gérer l'erreur si la requête a échoué
-      print('Failed to login: ${response.statusCode}');
+
+      Map<String, dynamic>? userData = jsonResponse['user'];
+      String? jwtToken = jsonResponse['jwtToken'];
+
+
+      if (userData != null && jwtToken != null) {
+        User user = User(
+          user_id: userData['userId'],
+          name: userData['name'],
+          mail: userData['mail'],
+          token: jwtToken,
+        );
+        print(jwtToken);
+        print(user.token);
+        print(response.body);
+
+        return user;
+      } else {
+      // les données d'utilisateur ou le jeton sont manquants
+      print('User data or JWT token is missing in the response.');
       return null;
+    }
+  } else {
+    // la requête a échoué
+    print('Failed to login: ${response.statusCode}');
+    return null;
     }
   }
 
   static Future<int?> signUp(String name, String username, String password) async {
-    String url = 'http://10.176.130.236:8888/Public/User/Create';
+    String url = 'http://192.168.104.128/Public/User/Create';
 
     Map<String, dynamic> authData = {
       'name': name,
       'mail': username,
       'password': password,
     };
-    
+
     String jsonBody = json.encode(authData);
     print (jsonBody);
     var response = await http.post(
@@ -106,10 +116,10 @@ class UserRepository{
   }
 
   static Future<List<User>> getChats(String token) async {
-    String url = 'http://10.176.130.236:8888/Public/Message/getChats';
+    String url = 'http://192.168.104.128/Public/User/getChatsFromUserToken';
 
     Map<String, dynamic> authData = {
-      'token': token,
+      'jwtToken': token,
     };
 
     String jsonBody = json.encode(authData);
@@ -123,16 +133,17 @@ class UserRepository{
     );
 
     List<User> userList = [];
+    print(token);
+    print(response);
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
 
       for (var item in jsonResponse) {
         User user = User(
-          user_id: item['UserId'],
-          name: item['Name'],
-          mail: item['Mail'],
-          token: item['Token']
+            user_id: item['userId'],
+            name: item['name'],
+            mail: item['mail']
         );
         userList.add(user);
       }
@@ -140,8 +151,6 @@ class UserRepository{
       // Gérer l'erreur si la requête a échoué
       print('Failed to load chats: ${response.statusCode}');
     }
-
     return userList;
   }
 }
-  
