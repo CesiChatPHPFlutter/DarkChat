@@ -3,6 +3,8 @@ import 'package:message_app/models/config.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../models/expireTokenException.dart';
+
 class UserRepository{
 
   static Future<List<User>> getAll() async {
@@ -135,7 +137,10 @@ class UserRepository{
     print(token);
     print(response);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 401) {
+      throw ExpireTokenException("Expired Token");
+    }
+    else if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
 
       for (var item in jsonResponse) {

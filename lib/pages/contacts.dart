@@ -40,12 +40,12 @@ class _ContactState extends State<Contact> {
       appBar: AppBar(
         title: const Text('Menu'),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Action à effectuer lors de l'appui sur le bouton de recherche
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.search),
+          //   onPressed: () {
+          //     // Action à effectuer lors de l'appui sur le bouton de recherche
+          //   },
+          // ),
           IconButton(
             icon: const Icon(Icons.message),
             onPressed: () {
