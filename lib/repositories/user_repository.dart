@@ -1,4 +1,5 @@
 import 'package:message_app/models/user.dart';
+import 'package:message_app/models/config.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -8,7 +9,7 @@ class UserRepository{
     List<User> userList = [];
 
     // URL de l'API
-    String url = 'http://192.168.104.128/Public/User/GetAll';
+    String url = '${AppConfig.apiUrl}/User/GetAll';
 
     // Effectuer la requête HTTP
     var response = await http.get(Uri.parse(url));
@@ -36,7 +37,7 @@ class UserRepository{
   }
 
   static Future<User?> login(String username, String password) async {
-    String url = 'http://192.168.104.128/Public/User/Login';
+    String url = '${AppConfig.apiUrl}/User/Login';
 
     Map<String, dynamic> authData = {
       'mail': username,
@@ -56,8 +57,6 @@ class UserRepository{
     if (response.statusCode == 200) {
 
       Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-
       Map<String, dynamic>? userData = jsonResponse['user'];
       String? jwtToken = jsonResponse['jwtToken'];
 
@@ -77,6 +76,7 @@ class UserRepository{
       } else {
       // les données d'utilisateur ou le jeton sont manquants
       print('User data or JWT token is missing in the response.');
+
       return null;
     }
   } else {
@@ -87,7 +87,7 @@ class UserRepository{
   }
 
   static Future<int?> signUp(String name, String username, String password) async {
-    String url = 'http://192.168.104.128/Public/User/Create';
+    String url = '${AppConfig.apiUrl}/User/Create';
 
     Map<String, dynamic> authData = {
       'name': name,
@@ -116,7 +116,7 @@ class UserRepository{
   }
 
   static Future<List<User>> getChats(String token) async {
-    String url = 'http://192.168.104.128/Public/User/getChatsFromUserToken';
+    String url = '${AppConfig.apiUrl}/User/getChatsFromUserToken';
 
     Map<String, dynamic> authData = {
       'jwtToken': token,
