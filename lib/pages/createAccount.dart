@@ -25,14 +25,14 @@ class _CreateAccountState extends State<CreateAccount> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Champs incomplets'),
-            content: Text('Veuillez remplir tous les champs.'),
+            title: const Text('Champs incomplets'),
+            content: const Text('Veuillez remplir tous les champs.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -88,7 +88,7 @@ class _CreateAccountState extends State<CreateAccount> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -99,14 +99,15 @@ class _CreateAccountState extends State<CreateAccount> {
               ),
               child: TextField(
                 controller: _nameController,
-                decoration: InputDecoration(
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
                   labelText: 'Name',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(15),
                 ),
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[200],
@@ -114,14 +115,16 @@ class _CreateAccountState extends State<CreateAccount> {
               ),
               child: TextField(
                 controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
+                textInputAction: TextInputAction.next,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Mail',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(15),
                 ),
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[200],
@@ -129,7 +132,11 @@ class _CreateAccountState extends State<CreateAccount> {
               ),
               child: TextField(
                 controller: _passwordController,
-                decoration: InputDecoration(
+                textInputAction: TextInputAction.done,
+                onSubmitted: (value) {
+                  _submitForm();
+                },
+                decoration: const InputDecoration(
                   labelText: 'Password',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(15),
@@ -137,21 +144,21 @@ class _CreateAccountState extends State<CreateAccount> {
                 obscureText: true,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
                 onPressed: _submitForm,
-                child: Text(
-                  'Create account',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                child: const Text(
+                  'Create account',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

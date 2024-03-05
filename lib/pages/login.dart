@@ -79,15 +79,17 @@ class _LoginState extends State<Login> {
                 ),
                 child: TextField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Username',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'Mail',
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(15),
                   ),
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -95,37 +97,41 @@ class _LoginState extends State<Login> {
                 ),
                 child: TextField(
                   controller: _passwordController,
-                  decoration: InputDecoration(
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (value) {
+                    _submitForm();
+                  },
+                  decoration: const InputDecoration(
                     labelText: 'Password',
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(15),
                   ),
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                   obscureText: true,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                child: const Text(
                   'Login',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.black,
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: _goToSignUp,
-                child: Text(
+                child: const Text(
                   'Sign Up',
                   style: TextStyle(
                     color: Colors.black,

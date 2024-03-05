@@ -190,6 +190,10 @@ class _ChatRoomState extends State<ChatRoom> {
           Expanded(
             child: TextField(
               controller: _textEditController,
+              textInputAction: TextInputAction.send,
+              onSubmitted: (value) {
+                 sendMessage();
+              },
               obscureText: false,
               decoration: const InputDecoration(
                 hintText: 'Aa',

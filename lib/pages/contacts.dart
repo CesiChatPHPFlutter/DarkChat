@@ -4,17 +4,15 @@ import 'package:message_app/pages/profil.dart';
 import 'package:message_app/pages/chatRoom.dart';
 import 'package:message_app/repositories/user_repository.dart';
 
-import 'contacts.dart';
-
-class Menu extends StatefulWidget {
+class Contact extends StatefulWidget {
   final User? user;
-  Menu({Key? key, required this.user}) : super(key: key);
+  Contact({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<Menu> createState() => _MenuState();
+  State<Contact> createState() => _ContactState();
 }
 
-class _MenuState extends State<Menu> {
+class _ContactState extends State<Contact> {
   List<User> chatUsers = [];
 
   @override
@@ -25,7 +23,9 @@ class _MenuState extends State<Menu> {
 
   void fetchChats() async {
     try {
-      List<User> chats = await UserRepository.getChats(widget.user!.token!);
+      List<User> chats = await UserRepository.getAll();
+      chats = chats.where((element) => element.user_id != widget.user!.user_id).toList();
+      // List<User> chats = await UserRepository.getChats(widget.user!.token!);
       setState(() {
         chatUsers = chats;
       });
@@ -47,13 +47,11 @@ class _MenuState extends State<Menu> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.contact_page),
+            icon: const Icon(Icons.message),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Contact(user: widget.user!),
-                ),
+              // Action à effectuer lors de l'appui sur le bouton pour lancer une discussion
+              Navigator.pop(
+                  context
               );
             },
           ),
@@ -76,7 +74,7 @@ class _MenuState extends State<Menu> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: const Text(
-              'Discussions récentes',
+              'Destinataires',
               style: TextStyle(fontSize: 24),
             ),
           ),
