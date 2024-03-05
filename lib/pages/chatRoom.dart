@@ -1,36 +1,52 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:http/http.dart';
 import 'package:message_app/models/message.dart';
 
-import '../repositories/message_repositoru.dart';
+import '../models/user.dart';
+import '../repositories/message_repository.dart';
 
 class ChatRoom extends StatefulWidget {
-  const ChatRoom({Key? key}) : super(key: key);
+  final User? user;
+  final int otherUserId;
+  const ChatRoom({Key? key, required this.user, required this.otherUserId})
+      : super(key: key);
 
   @override
-  _ChatRoomState createState() => _ChatRoomState();
+  State createState() => _ChatRoomState();
 }
 
 class _ChatRoomState extends State<ChatRoom> {
-  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MDk1NjIyNDgsImlzcyI6ImNlc2kubG9jYWwiLCJuYmYiOjE3MDk1NjIyNDgsImV4cCI6MTcwOTU4Mzg0OCwiZGF0YXMiOnsidXNlcklkIjoxLCJtYWlsIjoiVXNlcjFAbWFpbC5jb20iLCJuYW1lIjoiVXNlcjEifX0.eZZ9hNrND1VoQ_i2mKGB015jCFYu7BIiuLMqI7UW9mTvxRcWlnrC3uhI47_4JLtiE1JVFec7UfTugLBiZg085Q";
-  int userId = 2;
+  // String token = widget.user!.token!;
+  // final int userId = ;
 
   List<Message> messages = [];
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textEditController = TextEditingController();
+  late final Timer? timer;
 
-  static const _pageSize = 5;
+  static const _pageSize = 30;
   bool isLoading = true;
   int page = 1;
   bool isLoadingMore = false;
   bool noMoreMessages = false;
+  int currentTotalMessage = 0;
 
   void getMessages() async {
     try {
-      final loadedMessages = await MessageRepository.messagesWithUserId(token, userId, page, _pageSize*4);
+      final loadedMessages = await MessageRepository.messagesWithUserId(
+          widget.user!.token!, widget.otherUserId, page, _pageSize);
       setState(() {
         messages = loadedMessages;
+        page++;
         isLoading = false;
+      });
+
+      // Scroll to bottom when initialized
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController
+            .jumpTo(_scrollController.position.maxScrollExtent + 100);
       });
     } catch (error) {
       // if (error is ExpireTokenException) {
@@ -48,20 +64,12 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   void _scrollListener() {
-    // print('fffffffffffffffffff');
-    // print(_scrollController.position.pixels);
-    // print(_scrollController.position.maxScrollExtent);
-    // print(_scrollController.position.maxScrollExtent * 0.1);
-    // print(_scrollController.position.minScrollExtent);
-    // print(_scrollController.position.minScrollExtent * 0.1);
-    // if (_scrollController.position.pixels <= _scrollController.position.maxScrollExtent * 0.5 &&
-    //     !isLoadingMore && !noMoreMessages) {
-    if(_scrollController.position.userScrollDirection == ScrollDirection.reverse
-        && _scrollController.position.pixels >= _scrollController.position.maxScrollExtent * 0.8
-        && !isLoadingMore && !noMoreMessages) {
-    // if (_scrollController.position.pixels <= _scrollController.position.maxScrollExtent * 0.5 &&
-    //     !isLoadingMore && !noMoreMessages) {
-
+    if (_scrollController.position.userScrollDirection ==
+            ScrollDirection.forward &&
+        _scrollController.position.pixels <=
+            _scrollController.position.maxScrollExtent * 0.2 &&
+        !isLoadingMore &&
+        !noMoreMessages) {
       setState(() {
         isLoadingMore = true;
       });
@@ -72,7 +80,7 @@ class _ChatRoomState extends State<ChatRoom> {
   Future<void> loadMore() async {
     try {
       final moreMessages = await MessageRepository.messagesWithUserId(
-          token, userId, page, _pageSize);
+          widget.user!.token!, widget.otherUserId, page, _pageSize);
       if (moreMessages.isEmpty) {
         setState(() {
           isLoadingMore = false;
@@ -105,7 +113,7 @@ class _ChatRoomState extends State<ChatRoom> {
     return ListView.builder(
       controller: _scrollController,
       scrollDirection: Axis.vertical,
-      reverse: true,
+      reverse: false,
       itemCount: messages.length,
       itemBuilder: (context, index) {
         // Reaching top of the list, load more messages
@@ -123,81 +131,146 @@ class _ChatRoomState extends State<ChatRoom> {
           );
         }
         // Subtracting index by 1 to match messages index
-        final message = messages[index];
+        final message = messages[messages.length - 1 - index];
         return _buildMessageItem(message);
       },
     );
   }
 
   Widget _buildMessageItem(Message message) {
-    var alignment = message.sender_id != userId
+    var alignment = message.sender_id != widget.otherUserId
         ? Alignment.centerRight
         : Alignment.centerLeft;
 
-    var row = Column(children: [Text("${message.message_id}"), Text(message.content!)]);
+    var color = message.sender_id != widget.otherUserId ? Colors.black : Colors.white;
+    double bottomLeftRadius = message.sender_id != widget.otherUserId ? 16 : 0;
+    double bottomRightRadius = message.sender_id != widget.otherUserId ? 0 : 16;
+
+    var decoration = BoxDecoration(
+      borderRadius: BorderRadius.only(
+        topRight: const Radius.circular(16),
+        topLeft: const Radius.circular(16),
+        bottomLeft: Radius.circular(bottomLeftRadius),
+        bottomRight: Radius.circular(bottomRightRadius),
+      ),
+      color: message.sender_id != widget.otherUserId
+          ? const Color.fromRGBO(234, 234, 234, 1)
+          : Colors.black,
+      border: Border.all(color: Colors.black),
+    );
+
+    var child = Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
+      decoration: decoration,
+      constraints: const BoxConstraints(minWidth: 10, maxWidth: 200),
+      child: Text(
+        message.content!,
+        style: TextStyle(
+          color: color,
+        ),
+      ),
+    );
 
     return Container(
       alignment: alignment,
-      child: row,
+      child: child,
     );
   }
 
   Widget _buildMessageInput() {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            obscureText: false,
-            decoration: new InputDecoration.collapsed(hintText: 'Aa'),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(width: 4.0, color: Colors.black),
         ),
-        IconButton(
-            onPressed: sendMessage,
-            icon: const Icon(
-              Icons.arrow_upward,
-              size: 40,
-            )
-        )
-      ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _textEditController,
+              obscureText: false,
+              decoration: const InputDecoration(
+                hintText: 'Aa',
+              ),
+            ),
+          ),
+          Container(
+            color: Colors.black,
+            child: IconButton(
+                onPressed: sendMessage,
+                icon: const Icon(
+                  Icons.arrow_upward,
+                  color: Colors.white,
+                  size: 40,
+                )),
+          )
+        ],
+      )
     );
   }
 
-  void sendMessage() {
+  void sendMessage() async {
+    if (_textEditController.text == "") return;
 
+    final message = await MessageRepository.createMessage(
+        widget.user!.token!, widget.otherUserId, _textEditController.text);
+
+    if (message == null) return;
+
+    _textEditController.text = '';
+    page = 1;
+    getMessages();
+  }
+
+  void checkMessageCount() async {
+    final messageCount = await MessageRepository.totalMessagesWithUserId(
+      widget.user!.token!,
+      widget.otherUserId,
+    );
+
+    if (currentTotalMessage < messageCount) {
+      currentTotalMessage = messageCount;
+      page = 1;
+      getMessages();
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    timer =
+        Timer.periodic(Duration(seconds: 1), (Timer t) => checkMessageCount());
     getMessages();
+    // _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  }
 
-    // Scroll to bottom when initialized
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    });
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _scrollController.dispose();
+    _textEditController.dispose();
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Dark Profil'),
-          automaticallyImplyLeading: false,
-        ),
-        body: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          // mainAxisSize: MainAxisSize.max,
-          // mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Expanded(
-                child: _buildMessageList(),
-
-            ),
-            _buildMessageInput(),
-          ],
-        ),
-      // body: _buildMessageList(),
+      appBar: AppBar(
+        title: Text('Dark Profil'),
+        automaticallyImplyLeading: false,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: _buildMessageList(),
+          ),
+          _buildMessageInput(),
+        ],
+      ),
     );
   }
 }
