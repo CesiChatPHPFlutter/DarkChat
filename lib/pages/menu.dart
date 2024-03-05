@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/models/user.dart';
 import 'package:message_app/pages/profil.dart';
+import 'package:message_app/pages/chatRoom.dart';
 import 'package:message_app/repositories/user_repository.dart';
 
 class Menu extends StatefulWidget {
@@ -84,7 +85,12 @@ class _MenuState extends State<Menu> {
                   title: Text(user.name ?? ""),
                   subtitle: Text(user.mail ?? ""),
                   onTap: () {
-                    // Action à effectuer lorsqu'un utilisateur est sélectionné dans la liste
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatRoom(user: widget.user!, otherUserId: user.user_id!),
+                      ),
+                    );
                   },
                 );
               },
