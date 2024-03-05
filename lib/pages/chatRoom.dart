@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:message_app/models/message.dart';
 
+import '../models/expireTokenException.dart';
 import '../models/user.dart';
 import '../repositories/message_repository.dart';
+import 'login.dart';
 
 class ChatRoom extends StatefulWidget {
   final User? user;
@@ -49,13 +51,17 @@ class _ChatRoomState extends State<ChatRoom> {
             .jumpTo(_scrollController.position.maxScrollExtent + 100);
       });
     } catch (error) {
-      // if (error is ExpireTokenException) {
-      //   AuthentificationRepository.deleteUser();
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => const Login()),
-      //   );
-      //}
+      if (error is ExpireTokenException) {
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => const Login()),
+        // );
+        Navigator.of(context)
+            .pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Login()),
+          ModalRoute.withName('/'),
+        );
+      }
       print('Erreur lors du chargement des message: $error');
       setState(() {
         isLoading = false;
@@ -94,13 +100,17 @@ class _ChatRoomState extends State<ChatRoom> {
         });
       }
     }
-    // on ExpireTokenException catch (error){
-    //   AuthentificationRepository.deleteUser();
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => const Login()),
-    //   );
-    // }
+    on ExpireTokenException catch (error){
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const Login()),
+      // );
+      Navigator.of(context)
+          .pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const Login()),
+        ModalRoute.withName('/'),
+      );
+    }
     catch (error) {
       print("Erreur lors du chargement des souvenirs: $error");
       setState(() {
@@ -116,12 +126,6 @@ class _ChatRoomState extends State<ChatRoom> {
       reverse: false,
       itemCount: messages.length,
       itemBuilder: (context, index) {
-        // Reaching top of the list, load more messages
-        // if (index == 0) {
-        //   return Center(
-        //     child: CircularProgressIndicator(),
-        //   );
-        // }
         if (isLoadingMore && !noMoreMessages) {
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -180,7 +184,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   Widget _buildMessageInput() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(width: 4.0, color: Colors.black),
         ),

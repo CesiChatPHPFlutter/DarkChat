@@ -4,7 +4,9 @@ import 'package:message_app/pages/profil.dart';
 import 'package:message_app/pages/chatRoom.dart';
 import 'package:message_app/repositories/user_repository.dart';
 
+import '../models/expireTokenException.dart';
 import 'contacts.dart';
+import 'login.dart';
 
 class Menu extends StatefulWidget {
   final User? user;
@@ -29,7 +31,19 @@ class _MenuState extends State<Menu> {
       setState(() {
         chatUsers = chats;
       });
-    } catch (e) {
+    }
+    on ExpireTokenException catch (error){
+      Navigator.of(context)
+          .pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Login()),
+          ModalRoute.withName('/'),
+      );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const Login()),
+      // );
+    }
+    catch (e) {
       print('Error fetching chats: $e');
     }
   }
@@ -40,12 +54,12 @@ class _MenuState extends State<Menu> {
       appBar: AppBar(
         title: const Text('Menu'),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Action à effectuer lors de l'appui sur le bouton de recherche
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.search),
+          //   onPressed: () {
+          //     // Action à effectuer lors de l'appui sur le bouton de recherche
+          //   },
+          // ),
           IconButton(
             icon: const Icon(Icons.contact_page),
             onPressed: () {

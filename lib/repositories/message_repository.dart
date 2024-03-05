@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:message_app/models/message.dart';
 import 'package:message_app/models/config.dart';
 
+import '../models/expireTokenException.dart';
+
 class MessageRepository {
   
   static Future<List<Message>> messagesWithUserId(String token, int userId, int page, int perPage) async {
@@ -24,8 +26,10 @@ class MessageRepository {
     );
 
     List<Message> messageList = [];
-
-    if (response.statusCode == 200) {
+    if (response.statusCode == 401) {
+      throw ExpireTokenException("Expired Token");
+    }
+    else if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
 
       for (var item in jsonResponse) {
@@ -65,7 +69,10 @@ class MessageRepository {
       body: jsonBody,
     );
 
-    if (response.statusCode != 201) {
+    if (response.statusCode == 401) {
+      throw ExpireTokenException("Expired Token");
+    }
+    else if (response.statusCode != 201) {
       print('Failed to send message: ${response.statusCode}');
       return null;
     }
@@ -99,7 +106,10 @@ class MessageRepository {
       body: jsonBody,
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 401) {
+      throw ExpireTokenException("Expired Token");
+    }
+    else if (response.statusCode != 200) {
       print('Failed to fetch total of messages: ${response.statusCode}');
       return 0;
     }
