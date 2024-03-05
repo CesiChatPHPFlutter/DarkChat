@@ -22,10 +22,9 @@ class UserRepository{
       // Parcourir la liste JSON et créer des objets User
       for (var item in jsonResponse) {
         User user = User(
-            user_id: item['UserId'],
-            name: item['Name'],
-            mail: item['Mail'],
-            token: item['Token']
+            user_id: item['userId'],
+            name: item['name'],
+            mail: item['mail'],
         );
         userList.add(user);
       }
