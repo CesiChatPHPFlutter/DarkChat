@@ -4,6 +4,8 @@ import 'package:message_app/pages/createAccount.dart';
 import 'package:message_app/pages/menu.dart';
 import 'package:message_app/repositories/user_repository.dart';
 
+import 'configPage.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -44,10 +46,19 @@ class _LoginState extends State<Login> {
       );
   }
 
+  void _goToConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ConfigPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: false,
@@ -55,7 +66,7 @@ class _LoginState extends State<Login> {
         title: const Text(
           'Dark Chat',
           style: TextStyle(
-            color: Colors.black, 
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -133,6 +144,16 @@ class _LoginState extends State<Login> {
                 onPressed: _goToSignUp,
                 child: const Text(
                   'Sign Up',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: _goToConfig,
+                child: const Text(
+                  'Changer l\'adresse de l\'api',
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
