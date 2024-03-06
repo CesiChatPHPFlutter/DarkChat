@@ -268,8 +268,10 @@ class _ChatRoomState extends State<ChatRoom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dark Profil'),
+        title: Text('Dark Conversation'),
         automaticallyImplyLeading: false,
+        centerTitle: true,
+        backgroundColor: Colors.white,
       ),
       body: Column(
         children: [

@@ -38,7 +38,9 @@ class _ContactState extends State<Contact> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Menu'),
+        title: const Text('Dark Contacts'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         actions: <Widget>[
           // IconButton(
           //   icon: const Icon(Icons.search),
@@ -85,7 +87,8 @@ class _ContactState extends State<Contact> {
                 final user = chatUsers[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    child: Text(user.name![0]),
+                    child: Text(user.name![0], style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.grey[300],
                   ),
                   title: Text(user.name ?? ""),
                   subtitle: Text(user.mail ?? ""),

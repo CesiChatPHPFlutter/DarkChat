@@ -52,14 +52,11 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Menu'),
+        title: const Text('Dark Messages'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        backgroundColor: Colors.white,
         actions: <Widget>[
-          // IconButton(
-          //   icon: const Icon(Icons.search),
-          //   onPressed: () {
-          //     // Action à effectuer lors de l'appui sur le bouton de recherche
-          //   },
-          // ),
           IconButton(
             icon: const Icon(Icons.contact_page),
             onPressed: () {
@@ -95,13 +92,15 @@ class _MenuState extends State<Menu> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
+            child: ListView.separated(
               itemCount: chatUsers.length,
+              separatorBuilder: (context, index) => Divider(color: Colors.grey, height: 20, thickness: 0.5),
               itemBuilder: (context, index) {
                 final user = chatUsers[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    child: Text(user.name![0]),
+                    child: Text(user.name![0], style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.grey[300],
                   ),
                   title: Text(user.name ?? ""),
                   subtitle: Text(user.mail ?? ""),
@@ -116,7 +115,7 @@ class _MenuState extends State<Menu> {
                 );
               },
             ),
-          ),
+          )
         ],
       ),
     );
