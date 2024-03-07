@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:message_app/models/user.dart';
 import 'package:message_app/pages/createAccount.dart';
@@ -22,8 +23,6 @@ class _LoginState extends State<Login> {
     String password = _passwordController.text;
 
     User? user = await UserRepository.login(username, password);
-    print(user!.name);
-    print(user!.token);
     
     if (user != null) {
       Navigator.push(
@@ -33,7 +32,23 @@ class _LoginState extends State<Login> {
         ),
       );
     } else {
-      // Handle login failure
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(  
+            title: Text('Dark Error'),
+            content: Text('Mail / password incorrect'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK', style: TextStyle(color: Colors.black)),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

@@ -69,16 +69,10 @@ class UserRepository{
           mail: userData['mail'],
           token: jwtToken,
         );
-        print(jwtToken);
-        print(user.token);
-        print(response.body);
 
         return user;
       } else {
-      // les données d'utilisateur ou le jeton sont manquants
-      print('User data or JWT token is missing in the response.');
-
-      return null;
+        return null;
     }
   } else {
     // la requête a échoué
