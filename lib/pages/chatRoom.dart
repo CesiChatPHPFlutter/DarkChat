@@ -200,7 +200,7 @@ class _ChatRoomState extends State<ChatRoom> {
               },
               obscureText: false,
               decoration: const InputDecoration(
-                hintText: 'Aa',
+                hintText: 'Votre dark message',
               ),
             ),
           ),
